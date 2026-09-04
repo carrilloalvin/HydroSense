@@ -262,7 +262,14 @@
 
 <script>
 const STORAGE_KEY='hydrosense_state_v4';
-const defaultAccounts=[{name:'Admin User',email:'admin@hydrosense.local',password:'admin123',role:'admin',zone:'Office'},{name:'Alex Reyes',email:'demo@hydrosense.local',password:'demo123',role:'resident',zone:'Zone C'}];
+const defaultAccounts=[
+ {name:'Admin User',email:'admin@hydrosense.local',password:'admin123',role:'admin',zone:'Office'},
+ {name:'Alex Reyes',email:'demo@hydrosense.local',password:'demo123',role:'resident',zone:'Zone C'},
+ {name:'Maria Santos',email:'maria@hydrosense.local',password:'maria123',role:'resident',zone:'Zone B'},
+ {name:'Juan Dela Cruz',email:'juan@hydrosense.local',password:'juan123',role:'resident',zone:'Zone A'},
+ {name:'Jose Ramos',email:'jose@hydrosense.local',password:'jose123',role:'resident',zone:'Zone C'},
+ {name:'Ana Cruz',email:'ana@hydrosense.local',password:'ana123',role:'resident',zone:'Zone A'}
+];
 const defaultState={role:'admin',page:'dashboard',complaintId:8,noticeCount:3,residentNoticeCount:3,updateCount:1,accounts:defaultAccounts,notices:[
  {type:'NOTICE',zone:'Zone C',title:'Restoration Update',message:'Service restored after line inspection.',time:'Today • 8:42 PM'},
  {type:'NOTICE',zone:'Zone B',title:'Planned Interruption',message:'Tomorrow, 2:00 PM–5:00 PM.',time:'Today • 3:10 PM'},
@@ -270,6 +277,11 @@ const defaultState={role:'admin',page:'dashboard',complaintId:8,noticeCount:3,re
 ]};
 const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
 const state=Object.assign({},defaultState,saved||{});
+const savedAccounts=Array.isArray(state.accounts)?state.accounts.map(a=>({...a})):[];
+defaultAccounts.forEach(def=>{
+  if(!savedAccounts.some(a=>a.email.toLowerCase()===def.email.toLowerCase())) savedAccounts.push({...def});
+});
+state.accounts=savedAccounts;
 const defaultComplaints=[
  {id:'HS-008',resident:'Maria Santos',issue:'Low water pressure',zone:'Zone B',priority:'Urgent',status:'Pending',updated:'5 min ago',response:''},
  {id:'HS-007',resident:'Juan Dela Cruz',issue:'No water supply',zone:'Zone A',priority:'High',status:'In Progress',updated:'18 min ago',response:''},
@@ -283,6 +295,7 @@ const notices=Array.isArray(state.notices)?state.notices:defaultState.notices.ma
 state.notices=notices;
 let currentResponseId=null;
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+save();
 function esc(s){return String(s??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[m]));}
 function setRole(role){state.role=role;document.querySelectorAll('.role-btn').forEach(b=>b.classList.toggle('active',b.dataset.role===role));document.getElementById('loginBtn').textContent='Log In';const demo=defaultAccounts.find(a=>a.role===role);if(demo){document.getElementById('loginEmail').value=demo.email;document.getElementById('loginPassword').value=demo.password;}}
 
