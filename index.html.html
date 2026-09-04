@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HydroSense — Water Monitoring, Alerts & Support</title>
+<style>
+  :root{
+    --primary:#1769e0;
+    --primary-2:#0b4fb3;
+    --sky:#eaf4ff;
+    --mint:#eaf9f0;
+    --warning:#fff4d6;
+    --danger:#ffe7e8;
+    --text:#1d2a39;
+    --muted:#697789;
+    --border:#dfe7f0;
+    --surface:#ffffff;
+    --surface-2:#f6f9fc;
+    --shadow:0 14px 40px rgba(35,59,92,.10);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:#eef4fa;color:var(--text);min-height:100vh}
+  button,input,select,textarea{font:inherit}
+  button{cursor:pointer}
+  .hidden{display:none!important}
+
+  /* LOGIN */
+  #loginView{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 15% 15%,#d9ecff 0,#eef6ff 30%,#eff4fa 65%,#e8eff7 100%)}
+  .login-wrap{width:min(1100px,100%);display:grid;grid-template-columns:1.05fr .95fr;background:var(--surface);border-radius:28px;overflow:hidden;box-shadow:0 25px 70px rgba(25,55,90,.16)}
+  .login-brand{padding:52px;background:linear-gradient(160deg,#0f5fca,#1d7ae5);color:#fff;position:relative;overflow:hidden}
+  .login-brand:before,.login-brand:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.10)}
+  .login-brand:before{width:320px;height:320px;right:-150px;top:-80px}.login-brand:after{width:240px;height:240px;left:-120px;bottom:-110px}
+  .logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:25px;position:relative;z-index:2}
+  .logo-mark{width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.20);display:grid;place-items:center;font-size:23px}
+  .hero-copy{position:relative;z-index:2;margin-top:80px}
+  .hero-copy h1{font-size:48px;line-height:1.08;margin-bottom:18px;letter-spacing:-1px}
+  .hero-copy p{font-size:18px;line-height:1.7;max-width:470px;color:#e7f2ff}
+  .feature-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;position:relative;z-index:2}
+  .pill{padding:10px 14px;border:1px solid rgba(255,255,255,.23);background:rgba(255,255,255,.09);border-radius:999px;font-size:13px}
+  .login-card{padding:52px}
+  .login-card h2{font-size:30px;margin-bottom:8px}
+  .login-card .sub{color:var(--muted);margin-bottom:30px}
+  .field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+  .field label{font-size:13px;font-weight:700;color:#445365}
+  .input,.select,.textarea{width:100%;border:1px solid var(--border);background:#fbfdff;border-radius:12px;padding:13px 14px;outline:none;transition:.2s}
+  .input:focus,.select:focus,.textarea:focus{border-color:#72aaf4;box-shadow:0 0 0 4px rgba(23,105,224,.10)}
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .role-btn{padding:14px;border:1px solid var(--border);background:#fff;border-radius:13px;text-align:left}
+  .role-btn.active{border-color:#4d92ec;background:var(--sky)}
+  .role-btn strong{display:block}.role-btn span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+  .primary-btn{width:100%;border:0;padding:14px 18px;border-radius:13px;background:var(--primary);color:#fff;font-weight:800;box-shadow:0 10px 24px rgba(23,105,224,.22)}
+  .primary-btn:hover{background:var(--primary-2)}
+  .demo-note{margin-top:14px;padding:12px 14px;border-radius:12px;background:#f6f9fc;color:#617084;font-size:12px}
+  .auth-links{display:flex;justify-content:space-between;align-items:center;margin-top:15px;font-size:13px}.text-btn{border:0;background:none;color:#1769e0;font-weight:750;padding:0}.text-btn:hover{text-decoration:underline}
+  .residents-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:16px}.resident-card{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px;border:1px solid var(--border);border-radius:14px;background:#fbfdff;margin-top:10px}.resident-main{display:flex;align-items:center;gap:12px}.avatar{width:40px;height:40px;border-radius:12px;background:#e8f2ff;display:grid;place-items:center;font-weight:800;color:#1769e0}.resident-meta strong{display:block}.resident-meta span{font-size:12px;color:var(--muted)}
+
+  /* APP */
+  #appView{min-height:100vh;display:flex}
+  .sidebar{width:262px;background:#102238;color:#c5d3e4;padding:22px 14px;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:20}
+  .sidebar .logo{padding:0 10px;color:#fff}
+  .sidebar .logo-mark{background:#214567}
+  .nav{margin-top:34px;display:flex;flex-direction:column;gap:6px}
+  .nav button{border:0;background:transparent;color:#b5c5d7;padding:12px 14px;border-radius:12px;text-align:left;display:flex;align-items:center;gap:12px;font-weight:600}
+  .nav button:hover,.nav button.active{background:#193655;color:#fff}
+  .sidebar-foot{margin-top:auto;padding:12px 10px;color:#8298b1;font-size:12px}
+  .sidebar-user{margin-top:15px;padding:13px;background:#152b43;border-radius:14px;color:#d7e2ee}
+  .sidebar-user small{color:#8ea4bc}
+  .main{margin-left:262px;width:calc(100% - 262px);min-height:100vh}
+  .topbar{height:76px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:15}
+  .topbar .title{font-weight:800;font-size:20px}.topbar .right{display:flex;align-items:center;gap:12px}
+  .status-dot{width:9px;height:9px;background:#28b46b;border-radius:50%;display:inline-block;margin-right:7px}
+  .ghost-btn{border:1px solid var(--border);background:#fff;border-radius:11px;padding:9px 13px;color:#526173}
+  .content{padding:28px;max-width:1500px;margin:0 auto}
+  .welcome{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px;gap:15px}.welcome h1{font-size:30px;letter-spacing:-.5px}.welcome p{color:var(--muted);margin-top:6px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.grid-2{display:grid;grid-template-columns:1.3fr .9fr;gap:16px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}
+  .card h3{font-size:16px}.card .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .stat{position:relative;overflow:hidden}.stat .icon{width:42px;height:42px;border-radius:12px;background:#edf5ff;display:grid;place-items:center;font-size:20px;margin-bottom:13px}.stat .value{font-size:31px;font-weight:850}.stat .label{font-size:12px;color:var(--muted);margin-top:4px}.stat .trend{position:absolute;right:17px;top:17px;font-size:11px;padding:5px 8px;background:#edfaf2;color:#1e8b53;border-radius:999px}
+  .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.section-head h2{font-size:19px}.link-btn{border:0;background:none;color:#1e6fe5;font-weight:700}
+  .notice{display:flex;gap:14px;align-items:flex-start;padding:15px;border:1px solid var(--border);border-radius:14px;background:#fbfdff;margin-top:10px}.notice .badge{padding:6px 8px;border-radius:8px;background:#e8f2ff;color:#276dc7;font-size:11px;font-weight:800;white-space:nowrap}.notice p{font-size:13px;line-height:1.5}.notice small{display:block;color:var(--muted);margin-top:3px}
+  .table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:13px 10px;border-bottom:1px solid #edf1f5;text-align:left}.table th{color:#718096;font-size:11px;text-transform:uppercase;letter-spacing:.4px}.tag{padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;display:inline-block}.tag.pending{background:#fff5dc;color:#9a6a00}.tag.progress{background:#eaf3ff;color:#2265b9}.tag.resolved{background:#eaf9f0;color:#16814b}.tag.urgent{background:#ffe8e9;color:#b72c33}
+  .action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.action{border:1px solid var(--border);background:#fff;border-radius:14px;padding:16px;text-align:left}.action:hover{border-color:#8bb6ec;transform:translateY(-1px)}.action b{display:block;margin-top:10px}.action span{font-size:12px;color:var(--muted)}
+  .empty{text-align:center;padding:40px 20px;color:var(--muted)}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(14,29,47,.48);display:grid;place-items:center;z-index:50;padding:18px}.modal{width:min(620px,100%);background:#fff;border-radius:20px;padding:23px;box-shadow:0 30px 80px rgba(0,0,0,.24);max-height:90vh;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.close{border:0;background:#f1f4f7;width:34px;height:34px;border-radius:10px}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:750}.btn.secondary{background:#eef2f6;color:#435468}.btn.primary{background:var(--primary);color:#fff}
+  .calc{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.calc-result{padding:18px;border-radius:14px;background:#edf7ff;border:1px solid #d9eaff;margin-top:12px}.calc-result strong{font-size:28px;color:#0d5fc0}
+  .chat{display:flex;flex-direction:column;height:560px}.chat-body{flex:1;overflow:auto;padding:10px 2px}.msg{max-width:78%;padding:11px 13px;border-radius:14px;margin:8px 0;font-size:13px;line-height:1.5}.msg.bot{background:#eef4fa;border-top-left-radius:5px}.msg.user{background:#1769e0;color:#fff;margin-left:auto;border-top-right-radius:5px}.chat-form{display:flex;gap:8px;border-top:1px solid var(--border);padding-top:12px}.chat-form input{flex:1}
+  .progress-meter{height:9px;border-radius:999px;background:#e9eef4;overflow:hidden;margin:10px 0 15px}.progress-meter i{display:block;height:100%;background:linear-gradient(90deg,#4090ee,#23ae76);border-radius:999px}
+  
+
+  @media(max-width:1050px){.sidebar{width:220px}.main{margin-left:220px;width:calc(100% - 220px)}.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.login-wrap{grid-template-columns:1fr}.login-brand{display:none}}
+  @media(max-width:740px){.sidebar{width:74px;padding:18px 8px}.sidebar .logo span,.nav button span,.sidebar-foot,.sidebar-user{display:none}.nav button{justify-content:center}.main{margin-left:74px;width:calc(100% - 74px)}.content{padding:17px}.grid-4,.action-grid,.calc{grid-template-columns:1fr}.topbar{padding:0 15px}.welcome{align-items:flex-start;flex-direction:column}.login-card{padding:30px 22px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN VIEW -->
+<section id="loginView">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="logo"><div class="logo-mark">💧</div><span>HydroSense</span></div>
+      <div class="hero-copy">
+        <h1>Water service information, all in one place.</h1>
+        <p>Monitor service conditions, receive interruption and restoration updates, file complaints, calculate water bills, and get assistance from HydroSense.</p>
+      </div>
+      <div class="feature-pills">
+        <div class="pill">Real-time Updates</div><div class="pill">Resident Support</div><div class="pill">Complaint Management</div><div class="pill">Water Bill Calculator</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <h2>System Login</h2>
+      <div class="sub">Select your account type to continue.</div>
+      <div class="field">
+        <label>USER ROLE</label>
+        <div class="role-grid">
+          <button class="role-btn active" data-role="admin"><strong>🛡️ Administrator</strong><span>Manage services and complaints</span></button>
+          <button class="role-btn" data-role="resident"><strong>🏠 Resident</strong><span>Updates, complaints, bills & support</span></button>
+        </div>
+      </div>
+      <div class="field"><label>EMAIL</label><input class="input" id="loginEmail" type="email" value="admin@hydrosense.local" /></div>
+      <div class="field"><label>PASSWORD</label><input class="input" id="loginPassword" type="password" value="admin123" /></div>
+      <button class="primary-btn" id="loginBtn">Log In</button>
+      <div class="auth-links"><span style="color:var(--muted)">New resident?</span><button class="text-btn" id="showSignupBtn">Create an account</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION VIEW -->
+<section id="appView" class="hidden">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-mark">💧</div><span>HydroSense</span></div>
+    <nav id="nav" class="nav"></nav>
+    <div class="sidebar-foot">SE102<br/>Version 1.0</div>
+    <div class="sidebar-user"><strong id="sideName">Alex Reyes</strong><br/><small id="sideRole">Administrator</small></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="title" id="pageTitle">Dashboard</div>
+      <div class="right"><span><i class="status-dot"></i>Online</span><button class="ghost-btn" id="logoutBtn">Logout</button></div>
+    </header>
+
+    <div class="content">
+      <!-- ADMIN DASHBOARD -->
+      <div id="adminDashboard" class="page">
+        <div class="welcome"><div><h1>Admin Dashboard</h1><p>Monitor water service conditions and respond to resident concerns.</p></div><button class="btn primary" data-open="noticeModal">+ Send Water Notification</button></div>
+        <div class="grid-4">
+          <div class="card stat"><div class="icon">🚰</div><div class="value" id="activeInterruptions">1</div><div class="label">Active interruptions</div><div class="trend">Current</div></div>
+          <div class="card stat"><div class="icon">📢</div><div class="value" id="noticeCount">3</div><div class="label">Notifications</div><div class="trend">Sent</div></div>
+          <div class="card stat"><div class="icon">💬</div><div class="value" id="complaintCount">3</div><div class="label">Open complaints</div><div class="trend" id="openComplaintTrend">2 pending</div></div>
+          <div class="card stat"><div class="icon">🔄</div><div class="value" id="updateCount">1</div><div class="label">Restoration updates</div><div class="trend">Posted</div></div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="card"><div class="section-head"><div><h2>Service Status</h2><div class="sub">Current water service conditions</div></div><button class="link-btn" onclick="toast('Service status refreshed')">Refresh</button></div>
+            <div class="notice"><div class="badge">INTERRUPTION</div><div><p><b>Zone A — Scheduled Maintenance</b><br/>Water service interruption from 9:00 AM to 1:00 PM.</p><small>Updated 10 minutes ago</small></div></div>
+            <div class="notice"><div class="badge" style="background:#eaf9f0;color:#16814b">RESTORED</div><div><p><b>Zone C — Service Restored</b><br/>Water service is back to normal after line inspection.</p><small>Updated 32 minutes ago</small></div></div>
+            <div class="notice"><div class="badge" style="background:#fff4d6;color:#9a6a00">UPCOMING</div><div><p><b>Zone B — Planned Interruption</b><br/>Tomorrow, 2:00 PM–5:00 PM.</p><small>Posted today</small></div></div>
+          </div>
+          <div class="card"><div class="section-head"><div><h2>Quick Actions</h2><div class="sub">Common administrative tasks</div></div></div>
+            <div class="action-grid">
+              <button class="action" data-open="noticeModal">📢<b>Send Notice</b><span>Notify residents</span></button>
+              <button class="action" data-open="updateModal">🔄<b>Post Update</b><span>Restoration status</span></button>
+              <button class="action" onclick="showPage('complaints')">📝<b>Complaints</b><span>Review & respond</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="section-head"><div><h2>Recent Complaints</h2><div class="sub">Resident concerns requiring attention</div></div><button class="link-btn" onclick="showPage('complaints')">View all</button></div><div class="table-wrap"><table class="table"><thead><tr><th>Ticket</th><th>Resident</th><th>Concern</th><th>Zone</th><th>Status</th><th>Updated</th></tr></thead><tbody id="adminComplaintTable"></tbody></table></div></div>
+      </div>
+
+      <!-- ADMIN COMPLAINTS -->
+      <div id="complaints" class="page hidden">
+        <div class="welcome"><div><h1>Manage Resident Complaints</h1><p>Review concerns and prepare responses.</p></div><button class="btn primary" onclick="toast('New response draft created')">+ Draft Response</button></div>
+        <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Ticket</th><th>Resident</th><th>Concern</th><th>Zone</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody id="complaintTable"></tbody></table></div></div>
+      </div>
+
+      <!-- ADMIN RESIDENTS -->
+      <div id="residents" class="page hidden">
+        <div class="welcome"><div><h1>Residents</h1><p>View registered residents and their service areas.</p></div></div>
+        <div class="residents-grid">
+          <div class="card"><div class="section-head"><div><h2>Registered Residents</h2><div class="sub">Resident accounts in HydroSense</div></div><span class="tag progress" id="residentTotalTag">0 residents</span></div><div id="residentList"></div></div>
+          <div class="card"><div class="section-head"><div><h2>Resident Summary</h2><div class="sub">Account overview</div></div></div>
+            <div style="display:grid;gap:12px"><div style="padding:14px;border:1px solid var(--border);border-radius:14px;background:#fbfdff"><div style="font-size:11px;color:var(--muted);text-transform:uppercase">Registered</div><strong id="registeredCount" style="font-size:28px;display:block;margin-top:4px">0</strong></div><div style="padding:14px;border:1px solid var(--border);border-radius:14px;background:#fbfdff"><div style="font-size:11px;color:var(--muted);text-transform:uppercase">Active Accounts</div><strong id="activeResidentCount" style="font-size:28px;display:block;margin-top:4px">0</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESIDENT DASHBOARD -->
+      <div id="residentDashboard" class="page hidden">
+        <div class="welcome"><div><h1 id="residentWelcome">Good morning, Alex 👋</h1><p>Here’s your latest water service information.</p></div><button class="btn primary" data-open="complaintModal">+ File Complaint</button></div>
+        <div class="grid-4"><div class="card stat"><div class="icon">💧</div><div class="value">Stable</div><div class="label">Current service</div><div class="trend">Zone C</div></div><div class="card stat"><div class="icon">🔔</div><div class="value" id="residentNoticeCount">3</div><div class="label">New notices</div><div class="trend">Today</div></div><div class="card stat"><div class="icon">📝</div><div class="value" id="residentComplaintCount">0</div><div class="label">My complaints</div><div class="trend" id="residentComplaintTrend">0 pending</div></div></div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="card"><div class="section-head"><div><h2>Water Service Notices</h2><div class="sub">Receive interruption and restoration updates</div></div><span class="tag progress">Live</span></div>
+            <div id="residentNotices"></div>
+          </div>
+          <div class="card"><div class="section-head"><div><h2>Service Information</h2><div class="sub">Current information for your service area</div></div></div><div style="display:grid;gap:12px"><div style="padding:14px;border:1px solid var(--border);border-radius:14px;background:#fbfdff"><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Service area</div><strong style="display:block;margin-top:5px;font-size:18px">Zone C</strong><span style="font-size:12px;color:#16814b">● Normal service</span></div><div style="padding:14px;border:1px solid var(--border);border-radius:14px;background:#fbfdff"><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Latest update</div><strong style="display:block;margin-top:5px;font-size:15px">No active interruption</strong><span style="font-size:12px;color:var(--muted)">Check notices for scheduled updates.</span></div></div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="section-head"><div><h2>Support Center</h2><div class="sub">Self-service tools included in HydroSense</div></div></div><div class="action-grid"><button class="action" onclick="showPage('residentComplaints')">📝<b>File Complaint</b><span>Send a service concern</span></button><button class="action" onclick="showPage('calculator')">🧮<b>Water Bill Calculator</b><span>Enter only your m³ consumption</span></button><button class="action" onclick="showPage('chatbot')">🤖<b>AI Chatbot</b><span>Open the support chat</span></button></div></div>
+        <div class="card" style="margin-top:16px;overflow:hidden"><div class="section-head"><div><h2>Quick AI Support</h2><div class="sub">Chat directly from your Resident Portal</div></div><button class="link-btn" onclick="showPage('chatbot')">Open full chat →</button></div><div style="background:#f7fbff;border:1px solid #e2edf7;border-radius:16px;padding:18px"><div class="msg bot" style="max-width:90%;margin-top:0">Hi Alex! Need help with an interruption, complaint, restoration update, or water bill?</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="ghost-btn chat-suggestion" data-message="Is there a water interruption in my area?">💧 Interruption</button><button class="ghost-btn chat-suggestion" data-message="How do I file a complaint?">📝 Complaint</button><button class="ghost-btn chat-suggestion" data-message="How can I calculate my water bill?">🧮 Bill calculator</button></div></div></div>
+      </div>
+
+      <!-- RESIDENT COMPLAINTS -->
+      <div id="residentComplaints" class="page hidden"><div class="welcome"><div><h1>My Complaints</h1><p>Track complaints submitted from your resident portal.</p></div><button class="btn primary" data-open="complaintModal">+ File Complaint</button></div><div class="card"><table class="table"><thead><tr><th>Ticket</th><th>Concern</th><th>Date</th><th>Status</th><th>Response</th></tr></thead><tbody id="residentComplaintTable"></tbody></table></div></div>
+
+      <!-- CALCULATOR -->
+      <div id="calculator" class="page hidden">
+        <div class="welcome">
+          <div><h1>Water Bill Calculator</h1><p>Enter your water consumption in cubic meters (m³).</p></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-head"><div><h2>Water Consumption</h2><div class="sub">Enter the cubic meters from your water meter.</div></div></div>
+            <div class="field">
+              <label>WATER CONSUMPTION (m³)</label>
+              <input class="input" id="usage" type="number" min="0" step="0.01" value="18" placeholder="e.g. 18" />
+              <div style="font-size:12px;color:var(--muted);margin-top:5px">Just enter the cubic meters shown on your water meter/bill.</div>
+            </div>
+            <button class="btn primary" style="width:100%;padding:13px" onclick="calculateBill()">🧮 Check Consumption</button>
+            <div class="calc-result" id="calcResult"><span>Water Consumption</span><br/><strong>0 m³</strong><div id="calcBreakdown" style="font-size:12px;color:var(--muted);margin-top:5px">Enter your consumption and click check.</div></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><h2>How It Works</h2><div class="sub">Simple water-use check</div></div></div>
+            <div class="notice"><div class="badge">STEP 1</div><div><p><b>Enter m³</b><br/>Type your water consumption in cubic meters.</p></div></div>
+            <div class="notice"><div class="badge">STEP 2</div><div><p><b>Check</b><br/>Your recorded consumption is shown below.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHATBOT -->
+      <div id="chatbot" class="page hidden">
+        <div class="welcome">
+          <div><h1>HydroSense AI Chatbot</h1><p>Ask about interruptions, restoration notices, complaints, or water consumption.</p></div>
+        </div>
+        <div class="card chat">
+          <div class="chat-body" id="chatBody">
+            <div class="msg bot">👋 Hi! I’m HydroSense Support. How can I help you today?</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px">
+              <button class="ghost-btn chat-suggestion" data-message="Is there a water interruption in my area?">💧 Water interruption</button>
+              <button class="ghost-btn chat-suggestion" data-message="How do I file a complaint?">📝 File complaint</button>
+              <button class="ghost-btn chat-suggestion" data-message="How can I calculate my water bill?">🧮 Water bill</button>
+              <button class="ghost-btn chat-suggestion" data-message="When will water service be restored?">🔔 Restoration</button>
+            </div>
+          </div>
+          <form class="chat-form" id="chatForm">
+            <input class="input" id="chatInput" placeholder="Type your question..." autocomplete="off"/>
+            <button class="btn primary">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- MODALS -->
+<div id="signupModal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head"><h3>Create Resident Account</h3><button class="close" data-close>✕</button></div><div class="field"><label>FULL NAME</label><input class="input" id="signupName" placeholder="e.g. Alex Reyes" /></div><div class="field"><label>EMAIL</label><input class="input" id="signupEmail" type="email" placeholder="you@example.com" /></div><div class="field"><label>ZONE</label><select class="select" id="signupZone"><option>Zone A</option><option>Zone B</option><option selected>Zone C</option></select></div><div class="field"><label>PASSWORD</label><input class="input" id="signupPassword" type="password" placeholder="Create a password" /></div><div class="form-actions"><button class="btn secondary" data-close>Cancel</button><button class="btn primary" id="signupBtn">Create Account</button></div></div></div>
+<div id="noticeModal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head"><h3>Send Water Interruption Notification</h3><button class="close" data-close>✕</button></div><div class="field"><label>AREA / ZONE</label><select class="select" id="noticeZone"><option>Zone A</option><option>Zone B</option><option>Zone C</option></select></div><div class="field"><label>MESSAGE</label><textarea class="textarea" id="noticeMessage" rows="5">Water service interruption is scheduled due to maintenance. Please prepare sufficient water for your household needs.</textarea></div><div class="form-actions"><button class="btn secondary" data-close>Cancel</button><button class="btn primary" id="sendNoticeBtn">Send Notification</button></div></div></div>
+<div id="updateModal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head"><h3>Post Real-time Restoration Update</h3><button class="close" data-close>✕</button></div><div class="field"><label>AREA / ZONE</label><select class="select" id="updateZone"><option>Zone A</option><option>Zone B</option><option>Zone C</option></select></div><div class="field"><label>UPDATE STATUS</label><select class="select" id="updateStatus"><option>Restoration in progress</option><option>Service restored</option><option>Delayed restoration</option></select></div><div class="field"><label>DETAILS</label><textarea class="textarea" id="updateDetails" rows="4">Repair activities are ongoing. A follow-up update will be posted once the service condition changes.</textarea></div><div class="form-actions"><button class="btn secondary" data-close>Cancel</button><button class="btn primary" id="postUpdateBtn">Post Update</button></div></div></div>
+<div id="responseModal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head"><h3>Respond to Complaint</h3><button class="close" data-close>✕</button></div><div class="field"><label>TICKET</label><input class="input" id="responseTicket" readonly /></div><div class="field"><label>RESPONSE</label><textarea class="textarea" id="responseText" rows="5" placeholder="Write a response for the resident..."></textarea></div><div class="field"><label>STATUS</label><select class="select" id="responseStatus"><option>In Progress</option><option>Resolved</option></select></div><div class="form-actions"><button class="btn secondary" data-close>Cancel</button><button class="btn primary" id="saveResponseBtn">Save Response</button></div></div></div>
+<div id="complaintModal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head"><h3>File a Water Service Complaint</h3><button class="close" data-close>✕</button></div><div class="field"><label>CONCERN TYPE</label><select class="select" id="complaintType"><option>No Water Supply</option><option>Low Water Pressure</option><option>Billing Concern</option><option>Service Interruption</option><option>Other</option></select></div><div class="field"><label>LOCATION / ZONE</label><input class="input" id="complaintZone" value="Zone C" /></div><div class="field"><label>DESCRIPTION</label><textarea class="textarea" id="complaintDesc" rows="5" placeholder="Describe the issue..."></textarea></div><div class="form-actions"><button class="btn secondary" data-close>Cancel</button><button class="btn primary" id="submitComplaintBtn">Submit Complaint</button></div></div></div>
+
+<div id="toast" style="position:fixed;right:22px;bottom:22px;z-index:100;min-width:250px;background:#102238;color:#fff;padding:13px 16px;border-radius:12px;box-shadow:0 16px 34px rgba(0,0,0,.22);opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s"></div>
+
+<script>
+const STORAGE_KEY='hydrosense_state_v4';
+const defaultAccounts=[{name:'Admin User',email:'admin@hydrosense.local',password:'admin123',role:'admin',zone:'Office'},{name:'Alex Reyes',email:'demo@hydrosense.local',password:'demo123',role:'resident',zone:'Zone C'}];
+const defaultState={role:'admin',page:'dashboard',complaintId:8,noticeCount:3,residentNoticeCount:3,updateCount:1,accounts:defaultAccounts,notices:[
+ {type:'NOTICE',zone:'Zone C',title:'Restoration Update',message:'Service restored after line inspection.',time:'Today • 8:42 PM'},
+ {type:'NOTICE',zone:'Zone B',title:'Planned Interruption',message:'Tomorrow, 2:00 PM–5:00 PM.',time:'Today • 3:10 PM'},
+ {type:'RESTORED',zone:'Zone C',title:'Previous Update',message:'Temporary pressure issue has been resolved.',time:'Yesterday • 6:14 PM'}
+]};
+const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+const state=Object.assign({},defaultState,saved||{});
+const defaultComplaints=[
+ {id:'HS-008',resident:'Maria Santos',issue:'Low water pressure',zone:'Zone B',priority:'Urgent',status:'Pending',updated:'5 min ago',response:''},
+ {id:'HS-007',resident:'Juan Dela Cruz',issue:'No water supply',zone:'Zone A',priority:'High',status:'In Progress',updated:'18 min ago',response:''},
+ {id:'HS-006',resident:'Jose Ramos',issue:'Billing concern',zone:'Zone C',priority:'Normal',status:'Resolved',updated:'1 hr ago',response:'Your billing concern has been reviewed.'},
+ {id:'HS-005',resident:'Ana Cruz',issue:'Service interruption',zone:'Zone A',priority:'High',status:'In Progress',updated:'2 hrs ago',response:''}
+];
+const complaints=Array.isArray(state.complaints)?state.complaints:(defaultComplaints.map(c=>({...c})));
+state.complaints=complaints;
+state.complaintId=Math.max(state.complaintId||0,...complaints.map(c=>Number(String(c.id).replace(/\D/g,''))||0));
+const notices=Array.isArray(state.notices)?state.notices:defaultState.notices.map(n=>({...n}));
+state.notices=notices;
+let currentResponseId=null;
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[m]));}
+function setRole(role){state.role=role;document.querySelectorAll('.role-btn').forEach(b=>b.classList.toggle('active',b.dataset.role===role));document.getElementById('loginBtn').textContent='Log In';const demo=defaultAccounts.find(a=>a.role===role);if(demo){document.getElementById('loginEmail').value=demo.email;document.getElementById('loginPassword').value=demo.password;}}
+
+document.querySelectorAll('.role-btn').forEach(b=>b.addEventListener('click',()=>setRole(b.dataset.role)));
+
+document.getElementById('loginBtn').addEventListener('click',()=>{
+ const email=document.getElementById('loginEmail').value.trim().toLowerCase(), pass=document.getElementById('loginPassword').value, role=state.role;
+ const accounts=Array.isArray(state.accounts)?state.accounts:defaultAccounts;
+ const account=accounts.find(a=>a.email.toLowerCase()===email&&a.password===pass&&a.role===role);
+ if(!account){toast('Invalid account details');return;}
+ state.currentUser={name:account.name,email:account.email,role:account.role,zone:account.zone};document.getElementById('loginView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');
+ syncUserUI();
+ buildNav(); state.page=account.role==='admin'?'dashboard':'residentDashboard'; showPage(state.page); save();
+});
+
+document.getElementById('showSignupBtn').addEventListener('click',()=>openModal('signupModal'));
+
+document.getElementById('signupBtn').addEventListener('click',()=>{
+ const name=document.getElementById('signupName').value.trim(),email=document.getElementById('signupEmail').value.trim().toLowerCase(),zone=document.getElementById('signupZone').value,password=document.getElementById('signupPassword').value;
+ if(!name||!email||password.length<6){toast('Complete the form. Password must be at least 6 characters.');return;}
+ const accounts=Array.isArray(state.accounts)?state.accounts:(state.accounts=defaultAccounts.map(a=>({...a})));
+ if(accounts.some(a=>a.email.toLowerCase()===email)){toast('An account with this email already exists');return;}
+ accounts.push({name,email,password,role:'resident',zone});state.accounts=accounts;save();
+ document.getElementById('loginEmail').value=email;document.getElementById('loginPassword').value=password;setRole('resident');closeModals();document.getElementById('signupName').value='';document.getElementById('signupEmail').value='';document.getElementById('signupPassword').value='';toast('Resident account created. You can now log in.');
+ renderResidents();
+});
+
+document.getElementById('logoutBtn').addEventListener('click',()=>{delete state.currentUser;save();document.getElementById('appView').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden');closeModals();setRole('resident');});
+
+function buildNav(){
+ const nav=document.getElementById('nav');nav.innerHTML='';
+ const items=state.role==='admin'?[['dashboard','🏠','Dashboard'],['complaints','📝','Complaints'],['residents','👥','Residents']]:[['residentDashboard','🏠','Resident Portal'],['residentComplaints','📝','My Complaints'],['calculator','🧮','Bill Calculator'],['chatbot','🤖','AI Chatbot']];
+ items.forEach(([id,icon,label])=>{const b=document.createElement('button');b.dataset.page=id;b.innerHTML=`<span>${icon}</span><span>${label}</span>`;b.onclick=()=>showPage(id);nav.appendChild(b);});
+}
+function showPage(page){
+ document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));const el=document.getElementById(page);if(el)el.classList.remove('hidden');state.page=page;
+ const titleMap={dashboard:'Dashboard',complaints:'Complaints',residents:'Residents',residentDashboard:'Resident Portal',residentComplaints:'My Complaints',calculator:'Water Bill Calculator',chatbot:'AI Chatbot'};
+ document.getElementById('pageTitle').textContent=titleMap[page]||'HydroSense';document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+ if(page==='dashboard')renderAdminComplaints();if(page==='complaints')renderComplaintTable();if(page==='residents')renderResidents();if(page==='residentComplaints')renderResidentComplaints();if(page==='residentDashboard')renderResidentNotices();updateResidentComplaintSummary();
+}
+function getCurrentUser(){return state.currentUser||null;}
+function currentResidentName(){return getCurrentUser()?.name||'';}
+function currentResidentZone(){return getCurrentUser()?.zone||'Zone C';}
+function syncUserUI(){const u=getCurrentUser(); if(!u)return; const nameEl=document.getElementById('sideName'); const roleEl=document.getElementById('sideRole'); if(nameEl)nameEl.textContent=u.name; if(roleEl)roleEl.textContent=u.role==='admin'?'Administrator':'Resident'; const welcome=document.querySelector('#residentDashboard .welcome h1'); if(welcome)welcome.textContent=`Good morning, ${u.name} 👋`; const chatGreeting=document.querySelector('#residentDashboard .msg.bot'); if(chatGreeting)chatGreeting.textContent=`Hi ${u.name}! Need help with an interruption, complaint, restoration update, or water bill?`; const complaintZone=document.getElementById('complaintZone'); if(complaintZone && u.zone) complaintZone.value=u.zone;}
+function updateResidentComplaintSummary(){const own=complaints.filter(c=>c.resident===currentResidentName());const pending=own.filter(c=>c.status!=='Resolved').length;const countEl=document.getElementById('residentComplaintCount');const trendEl=document.getElementById('residentComplaintTrend');if(countEl)countEl.textContent=own.length;if(trendEl)trendEl.textContent=`${pending} pending`;const openEl=document.getElementById('complaintCount');if(openEl)openEl.textContent=complaints.filter(c=>c.status!=='Resolved').length;const trendOpen=document.getElementById('openComplaintTrend');if(trendOpen)trendOpen.textContent=`${complaints.filter(c=>c.status==='Pending').length} pending`;}
+function renderAdminComplaints(){document.getElementById('adminComplaintTable').innerHTML=complaints.slice(0,5).map(c=>`<tr><td>${esc(c.id)}</td><td>${esc(c.resident)}</td><td>${esc(c.issue)}</td><td>${esc(c.zone)}</td><td><span class="tag ${c.status==='Resolved'?'resolved':c.status==='Pending'?'pending':'progress'}">${esc(c.status)}</span></td><td>${esc(c.updated)}</td></tr>`).join('');}
+function renderComplaintTable(){document.getElementById('complaintTable').innerHTML=complaints.map(c=>`<tr><td><b>${esc(c.id)}</b></td><td>${esc(c.resident)}</td><td>${esc(c.issue)}</td><td>${esc(c.zone)}</td><td><span class="tag ${c.priority==='Urgent'?'urgent':c.priority==='High'?'pending':'progress'}">${esc(c.priority)}</span></td><td><span class="tag ${c.status==='Resolved'?'resolved':c.status==='Pending'?'pending':'progress'}">${esc(c.status)}</span></td><td><button class="btn secondary" onclick="respond('${esc(c.id)}')">Respond</button></td></tr>`).join('');}
+function renderResidentComplaints(){const own=complaints.filter(c=>c.resident===currentResidentName());document.getElementById('residentComplaintTable').innerHTML=own.length?own.map(c=>`<tr><td>${esc(c.id)}</td><td>${esc(c.issue)}</td><td>${esc(c.updated)}</td><td><span class="tag ${c.status==='Resolved'?'resolved':c.status==='In Progress'?'progress':'pending'}">${esc(c.status)}</span></td><td>${c.response?esc(c.response):'Awaiting review'}</td></tr>`).join(''):`<tr><td colspan="5"><div class="empty">No complaints submitted yet.</div></td></tr>`;}
+function renderResidentNotices(){document.getElementById('residentNotices').innerHTML=notices.slice().reverse().map(n=>`<div class="notice"><div class="badge ${n.type==='RESTORED'?'':n.type==='UPDATE'?'':''}" style="${n.type==='RESTORED'?'background:#eaf9f0;color:#16814b':n.type==='UPDATE'?'background:#fff4d6;color:#9a6a00':''}">${esc(n.type)}</div><div><p><b>${esc(n.zone)} — ${esc(n.title)}</b><br/>${esc(n.message)}</p><small>${esc(n.time)}</small></div></div>`).join('');}
+function renderResidents(){const accounts=(state.accounts||[]).filter(a=>a.role==='resident');const list=document.getElementById('residentList');if(!list)return;list.innerHTML=accounts.length?accounts.map(a=>`<div class="resident-card"><div class="resident-main"><div class="avatar">${esc(a.name.charAt(0).toUpperCase())}</div><div class="resident-meta"><strong>${esc(a.name)}</strong><span>${esc(a.email)} • ${esc(a.zone)}</span></div></div><span class="tag resolved">Active</span></div>`).join(''):`<div class="empty">No registered residents yet.</div>`;const count=accounts.length;const total=document.getElementById('residentTotalTag');const rc=document.getElementById('registeredCount');const ac=document.getElementById('activeResidentCount');if(total)total.textContent=`${count} resident${count===1?'':'s'}`;if(rc)rc.textContent=count;if(ac)ac.textContent=count;}
+function respond(id){const c=complaints.find(x=>x.id===id);if(!c)return;currentResponseId=id;document.getElementById('responseTicket').value=id;document.getElementById('responseText').value=c.response||'';document.getElementById('responseStatus').value=c.status==='Resolved'?'Resolved':'In Progress';openModal('responseModal');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity=1;t.style.transform='translateY(0)';clearTimeout(window.__toast);window.__toast=setTimeout(()=>{t.style.opacity=0;t.style.transform='translateY(12px)'},2400);}
+function openModal(id){document.getElementById(id)?.classList.remove('hidden');}
+function closeModals(){document.querySelectorAll('.modal-backdrop').forEach(m=>m.classList.add('hidden'));}
+document.addEventListener('click',e=>{const open=e.target.closest('[data-open]');if(open)openModal(open.dataset.open);if(e.target.matches('[data-close]')||e.target.closest('[data-close]'))closeModals();if(e.target.classList.contains('modal-backdrop'))e.target.classList.add('hidden');});
+
+document.getElementById('sendNoticeBtn').addEventListener('click',()=>{
+ const zone=document.getElementById('noticeZone').value, message=document.getElementById('noticeMessage').value.trim();
+ if(!message){toast('Enter a notification message');return;}
+ notices.push({type:'NOTICE',zone,title:'Water Service Notice',message,time:'Just now'});state.noticeCount=notices.filter(n=>n.type==='NOTICE').length;state.residentNoticeCount=notices.length;state.notices=notices;save();
+ document.getElementById('noticeCount').textContent=state.noticeCount;document.getElementById('residentNoticeCount').textContent=state.residentNoticeCount;closeModals();renderResidentNotices();toast(`Notification sent to ${zone}`);
+});
+
+document.getElementById('postUpdateBtn').addEventListener('click',()=>{
+ const zone=document.getElementById('updateZone').value,status=document.getElementById('updateStatus').value,details=document.getElementById('updateDetails').value.trim();
+ if(!details){toast('Enter update details');return;}
+ notices.push({type:'UPDATE',zone,title:status,message:details,time:'Just now'});state.updateCount=(state.updateCount||0)+1;state.residentNoticeCount=notices.length;state.notices=notices;save();document.getElementById('residentNoticeCount').textContent=state.residentNoticeCount;const u=document.getElementById('updateCount');if(u)u.textContent=state.updateCount;closeModals();renderResidentNotices();toast('Restoration update posted');
+});
+
+document.getElementById('submitComplaintBtn').addEventListener('click',()=>{
+ const issue=document.getElementById('complaintType').value,zone=document.getElementById('complaintZone').value.trim()||'Zone C',desc=document.getElementById('complaintDesc').value.trim();
+ if(!desc){toast('Please add a complaint description');return;}
+ const id=`HS-${String(++state.complaintId).padStart(3,'0')}`;complaints.unshift({id,resident:currentResidentName()||'Resident',issue,zone,priority:'Normal',status:'Pending',updated:'Just now',response:'',description:desc});state.complaints=complaints;save();
+ document.getElementById('complaintCount').textContent=Math.max(0,complaints.filter(c=>c.status!=='Resolved').length);updateResidentComplaintSummary();document.getElementById('complaintDesc').value='';closeModals();renderResidentComplaints();renderComplaintTable();toast(`Complaint ${id} submitted`);
+});
+
+document.getElementById('saveResponseBtn').addEventListener('click',()=>{
+ const c=complaints.find(x=>x.id===currentResponseId);if(!c)return;const response=document.getElementById('responseText').value.trim(),status=document.getElementById('responseStatus').value;if(!response){toast('Enter a response');return;}
+ c.response=response;c.status=status;c.updated='Just now';closeModals();renderComplaintTable();renderAdminComplaints();renderResidentComplaints();state.complaints=complaints;save();document.getElementById('complaintCount').textContent=Math.max(0,complaints.filter(x=>x.status!=='Resolved').length);updateResidentComplaintSummary();toast(`Response saved for ${c.id}`);
+});
+
+function calculateBill(){
+ const input=document.getElementById('usage'),usage=Number(input.value);
+ if(!Number.isFinite(usage)||usage<0){toast('Enter a valid cubic meter value');return;}
+ document.getElementById('calcResult').innerHTML=`<span>Water Consumption</span><br/><strong>${usage.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})} m³</strong><div id="calcBreakdown" style="font-size:12px;color:var(--muted);margin-top:5px">Consumption recorded for reference.</div>`;
+ localStorage.setItem('hydrosense_last_usage',String(usage));
+}
+const lastUsage=localStorage.getItem('hydrosense_last_usage');if(lastUsage&&document.getElementById('usage'))document.getElementById('usage').value=lastUsage;
+function sendChatMessage(q){
+ q=q.trim();if(!q)return;const body=document.getElementById('chatBody');body.insertAdjacentHTML('beforeend',`<div class="msg user">${esc(q)}</div>`);document.getElementById('chatInput').value='';body.scrollTop=body.scrollHeight;
+ setTimeout(()=>{let answer='I can help with water service notices, complaints, restoration updates, and water consumption.';
+ if(/bill|calcul|cubic|m³|m3/i.test(q))answer='Open Water Bill Calculator and enter the cubic meters (m³) from your water reading.';
+ else if(/complaint|report/i.test(q))answer='Go to My Complaints or choose File Complaint from the Resident Portal to submit a service concern.';
+ else if(/interrupt/i.test(q))answer='Check Water Service Notices for the latest interruption affecting your area.';
+ else if(/restor/i.test(q))answer='Restoration updates are posted in the Resident Portal as they become available.';
+ body.insertAdjacentHTML('beforeend',`<div class="msg bot">${answer}</div>`);body.scrollTop=body.scrollHeight;},350);
+}
+document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();sendChatMessage(document.getElementById('chatInput').value);});
+document.addEventListener('click',e=>{const s=e.target.closest('.chat-suggestion');if(s){showPage('chatbot');sendChatMessage(s.dataset.message||'');}});
+
+// Initialize the interface
+state.accounts=Array.isArray(state.accounts)?state.accounts:defaultAccounts.map(a=>({...a})); if(state.currentUser){document.getElementById('loginView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');syncUserUI();buildNav();showPage(state.currentUser.role==='admin'?'dashboard':'residentDashboard');}else{document.getElementById('loginView').classList.remove('hidden');document.getElementById('appView').classList.add('hidden');setRole('resident');} renderAdminComplaints();renderComplaintTable();renderResidents();renderResidentComplaints();renderResidentNotices();updateResidentComplaintSummary();const nc=document.getElementById('noticeCount');if(nc)nc.textContent=state.noticeCount||notices.filter(n=>n.type==='NOTICE').length;const rn=document.getElementById('residentNoticeCount');if(rn)rn.textContent=state.residentNoticeCount||notices.length;const uc=document.getElementById('updateCount');if(uc)uc.textContent=state.updateCount||1;
+</script>
+</body>
+</html>
